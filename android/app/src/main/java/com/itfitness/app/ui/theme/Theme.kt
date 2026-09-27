@@ -15,36 +15,29 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = NeonGreen,
-    background = Graphit,
-    surface = SurfaceDark,
-    onPrimary = Graphit,
-    onBackground = TextPrimary,
-    onSurface = TextPrimary
-)
-
 private val LightColorScheme = lightColorScheme(
-    primary = NeonGreen,
-    background = Graphit, // Forcing dark theme aesthetic
-    surface = SurfaceDark,
-    onPrimary = Graphit,
-    onBackground = TextPrimary,
-    onSurface = TextPrimary
+    primary = PrimaryPurple,
+    background = BackgroundLight,
+    surface = SurfaceWhite,
+    onPrimary = SurfaceWhite,
+    onBackground = TextPrimaryDark,
+    onSurface = TextPrimaryDark,
+    secondary = SecondaryOrange,
+    onSecondary = SurfaceWhite
 )
 
 @Composable
 fun ItFitnessTheme(
-    darkTheme: Boolean = true, // Force dark theme as per requirements
+    darkTheme: Boolean = false, // Forced light theme based on design
     content: @Composable () -> Unit
 ) {
-    val colorScheme = DarkColorScheme
+    val colorScheme = LightColorScheme
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = Graphit.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+            window.statusBarColor = SurfaceWhite.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 

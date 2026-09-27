@@ -7,9 +7,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.itfitness.app.ui.theme.Graphit
-import com.itfitness.app.ui.theme.NeonGreen
-import com.itfitness.app.ui.theme.TextPrimary
+import com.itfitness.app.ui.theme.BackgroundLight
+import com.itfitness.app.ui.theme.PrimaryPurple
+import com.itfitness.app.ui.theme.SurfaceWhite
+import com.itfitness.app.ui.theme.TextPrimaryDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -17,11 +18,11 @@ fun AuthScreen(navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Авторизация", color = TextPrimary) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Graphit)
+                title = { Text("Авторизация", color = TextPrimaryDark) },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceWhite)
             )
         },
-        containerColor = Graphit
+        containerColor = BackgroundLight
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -31,13 +32,13 @@ fun AuthScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Экран входа / регистрации", color = TextPrimary)
+            Text(text = "Экран входа / регистрации", color = TextPrimaryDark)
             Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { navController.popBackStack() },
-                colors = ButtonDefaults.buttonColors(containerColor = NeonGreen)
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)
             ) {
-                Text("ВЕРНУТЬСЯ", color = Graphit)
+                Text("ВЕРНУТЬСЯ", color = SurfaceWhite)
             }
         }
     }

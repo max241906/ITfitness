@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.itfitness.app.ui.navigation.Screen
@@ -22,7 +23,8 @@ fun BottomNavBar(navController: NavController) {
     )
 
     NavigationBar(
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = MaterialTheme.colorScheme.surface,
+        contentColor = MaterialTheme.colorScheme.onSurface
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
@@ -44,9 +46,9 @@ fun BottomNavBar(navController: NavController) {
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.primary,
                     selectedTextColor = MaterialTheme.colorScheme.primary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    indicatorColor = MaterialTheme.colorScheme.surface
+                    unselectedIconColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                    indicatorColor = Color.Transparent
                 )
             )
         }

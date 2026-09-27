@@ -21,11 +21,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.itfitness.app.data.models.Trainer
-import com.itfitness.app.ui.theme.Graphit
-import com.itfitness.app.ui.theme.NeonGreen
-import com.itfitness.app.ui.theme.SurfaceDark
-import com.itfitness.app.ui.theme.TextPrimary
-import com.itfitness.app.ui.theme.TextSecondary
+import com.itfitness.app.ui.theme.BackgroundLight
+import com.itfitness.app.ui.theme.PrimaryPurple
+import com.itfitness.app.ui.theme.SurfaceWhite
+import com.itfitness.app.ui.theme.TextPrimaryDark
+import com.itfitness.app.ui.theme.TextSecondaryGrey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,14 +38,14 @@ fun TrainersScreen(navController: NavController, viewModel: MainViewModel = view
                 title = {
                     Text(
                         "Тренеры",
-                        color = TextPrimary,
+                        color = TextPrimaryDark,
                         fontWeight = FontWeight.Bold
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Graphit)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceWhite)
             )
         },
-        containerColor = Graphit
+        containerColor = BackgroundLight
     ) { paddingValues ->
         LazyColumn(
             contentPadding = PaddingValues(16.dp),
@@ -69,7 +69,7 @@ fun TrainerCard(trainer: Trainer, onLikeClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { /* Navigate to trainer details */ },
-        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column {
@@ -99,14 +99,14 @@ fun TrainerCard(trainer: Trainer, onLikeClick: () -> Unit) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = trainer.name,
-                    color = TextPrimary,
+                    color = TextPrimaryDark,
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = trainer.specialization,
-                    color = NeonGreen,
+                    color = PrimaryPurple,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp
                 )
@@ -117,12 +117,12 @@ fun TrainerCard(trainer: Trainer, onLikeClick: () -> Unit) {
                 ) {
                     Text(
                         text = "Стаж: ${trainer.experienceYears} лет",
-                        color = TextSecondary,
+                        color = TextSecondaryGrey,
                         fontSize = 14.sp
                     )
                     Text(
                         text = "${trainer.pricePerSession} ₽ / занятие",
-                        color = TextPrimary,
+                        color = TextPrimaryDark,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp
                     )

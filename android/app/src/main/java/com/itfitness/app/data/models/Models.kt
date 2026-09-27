@@ -4,7 +4,9 @@ data class Story(
     val id: String,
     val imageUrl: String,
     val title: String,
-    val isViewed: Boolean = false
+    val isViewed: Boolean = false,
+    val gradientStart: Long = 0xFF5D438F, // Default colors matching the design
+    val gradientEnd: Long = 0xFF9E84D1
 )
 
 data class Banner(
@@ -35,9 +37,14 @@ data class GroupClass(
     val id: String,
     val title: String,
     val trainerName: String,
+    val trainerAvatarUrl: String,
     val scheduleTime: String,
+    val duration: String, // e.g. "45 мин" or "55 мин"
+    val location: String, // e.g. "DDX Волгоград Акварель"
+    val zone: String,     // e.g. "Зона — Зал групповых программ"
     val maxSlots: Int,
-    val bookedSlots: Int
+    val bookedSlots: Int,
+    val isBookedByUser: Boolean = false
 )
 
 data class PaymentTransaction(
@@ -50,5 +57,7 @@ data class PaymentTransaction(
 data class UserProfile(
     val name: String,
     val balance: Int,
-    val remainingSessions: Int
+    val remainingSessions: Int,
+    val avatarUrl: String,
+    val subscriptionStatus: String
 )

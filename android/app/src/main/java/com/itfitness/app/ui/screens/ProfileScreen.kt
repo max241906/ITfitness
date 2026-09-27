@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.itfitness.app.data.models.PaymentTransaction
-import com.itfitness.app.ui.theme.Graphit
-import com.itfitness.app.ui.theme.NeonGreen
-import com.itfitness.app.ui.theme.SurfaceDark
-import com.itfitness.app.ui.theme.TextPrimary
-import com.itfitness.app.ui.theme.TextSecondary
+import com.itfitness.app.ui.theme.BackgroundLight
+import com.itfitness.app.ui.theme.PrimaryPurple
+import com.itfitness.app.ui.theme.SurfaceWhite
+import com.itfitness.app.ui.theme.TextPrimaryDark
+import com.itfitness.app.ui.theme.TextSecondaryGrey
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -37,14 +37,14 @@ fun ProfileScreen(navController: NavController, viewModel: MainViewModel = viewM
                 title = {
                     Text(
                         "Профиль",
-                        color = TextPrimary,
+                        color = TextPrimaryDark,
                         fontWeight = FontWeight.Bold
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Graphit)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceWhite)
             )
         },
-        containerColor = Graphit
+        containerColor = BackgroundLight
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
@@ -70,7 +70,7 @@ fun ProfileScreen(navController: NavController, viewModel: MainViewModel = viewM
             item {
                 Text(
                     text = "ИСТОРИЯ ПЛАТЕЖЕЙ",
-                    color = TextPrimary,
+                    color = TextPrimaryDark,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
                     modifier = Modifier.padding(bottom = 16.dp)
@@ -88,7 +88,7 @@ fun ProfileScreen(navController: NavController, viewModel: MainViewModel = viewM
 fun BalanceSection(balance: Int, remainingSessions: Int) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
@@ -97,32 +97,32 @@ fun BalanceSection(balance: Int, remainingSessions: Int) {
         ) {
             Text(
                 text = "Ваш баланс",
-                color = TextSecondary,
+                color = TextSecondaryGrey,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "$balance ₽",
-                color = NeonGreen,
+                color = PrimaryPurple,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 32.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Осталось тренировок: $remainingSessions",
-                color = TextPrimary,
+                color = TextPrimaryDark,
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(24.dp))
             Button(
                 onClick = { /* Top up logic */ },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = NeonGreen),
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple),
                 shape = RoundedCornerShape(8.dp)
             ) {
                 Text(
                     text = "ПОПОЛНИТЬ",
-                    color = Graphit,
+                    color = SurfaceWhite,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -137,7 +137,7 @@ fun AiProgramBanner() {
             .fillMaxWidth()
             .background(
                 brush = Brush.horizontalGradient(
-                    colors = listOf(NeonGreen, androidx.compose.ui.graphics.Color(0xFF00B0FF))
+                    colors = listOf(PrimaryPurple, androidx.compose.ui.graphics.Color(0xFF8362C2))
                 ),
                 shape = RoundedCornerShape(16.dp)
             )
@@ -146,14 +146,14 @@ fun AiProgramBanner() {
         Column {
             Text(
                 text = "ИИ ПРОГРАММА ТРЕНИРОВОК",
-                color = Graphit,
+                color = SurfaceWhite,
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 18.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Сгенерируйте персональный план с помощью нейросети",
-                color = Graphit.copy(alpha = 0.8f),
+                color = SurfaceWhite.copy(alpha = 0.8f),
                 fontSize = 14.sp
             )
         }
@@ -164,13 +164,13 @@ fun AiProgramBanner() {
 fun SupportChatStub() {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = SurfaceDark),
+        colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = "Поддержка",
-                color = TextPrimary,
+                color = TextPrimaryDark,
                 fontWeight = FontWeight.Bold,
                 fontSize = 18.sp
             )
@@ -178,20 +178,20 @@ fun SupportChatStub() {
             OutlinedTextField(
                 value = "",
                 onValueChange = {},
-                placeholder = { Text("Напишите нам...", color = TextSecondary) },
+                placeholder = { Text("Напишите нам...", color = TextSecondaryGrey) },
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = {
                     Icon(
                         imageVector = Icons.Default.Send,
                         contentDescription = "Send",
-                        tint = NeonGreen
+                        tint = PrimaryPurple
                     )
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = NeonGreen,
-                    unfocusedBorderColor = TextSecondary,
-                    focusedTextColor = TextPrimary,
-                    unfocusedTextColor = TextPrimary
+                    focusedBorderColor = PrimaryPurple,
+                    unfocusedBorderColor = TextSecondaryGrey,
+                    focusedTextColor = TextPrimaryDark,
+                    unfocusedTextColor = TextPrimaryDark
                 ),
                 shape = RoundedCornerShape(24.dp)
             )
@@ -211,19 +211,19 @@ fun PaymentTransactionItem(transaction: PaymentTransaction) {
         Column {
             Text(
                 text = transaction.date,
-                color = TextPrimary,
+                color = TextPrimaryDark,
                 fontSize = 16.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = transaction.status,
-                color = NeonGreen,
+                color = PrimaryPurple,
                 fontSize = 12.sp
             )
         }
         Text(
             text = "- ${transaction.amount} ₽",
-            color = TextPrimary,
+            color = TextPrimaryDark,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp
         )
