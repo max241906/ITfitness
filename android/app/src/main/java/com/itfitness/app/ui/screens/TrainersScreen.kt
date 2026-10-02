@@ -55,7 +55,9 @@ fun TrainersScreen(navController: NavController, viewModel: MainViewModel = view
                 .padding(paddingValues)
         ) {
             items(trainers) { trainer ->
-                TrainerCard(trainer = trainer, onLikeClick = {
+                TrainerCard(trainer = trainer, onClick = {
+                    navController.navigate("trainer_detail/${trainer.id}")
+                }, onLikeClick = {
                     viewModel.toggleTrainerLike(trainer.id)
                 })
             }
@@ -64,11 +66,11 @@ fun TrainersScreen(navController: NavController, viewModel: MainViewModel = view
 }
 
 @Composable
-fun TrainerCard(trainer: Trainer, onLikeClick: () -> Unit) {
+fun TrainerCard(trainer: Trainer, onClick: () -> Unit, onLikeClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* Navigate to trainer details */ },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
         shape = RoundedCornerShape(16.dp)
     ) {

@@ -10,6 +10,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -28,6 +30,7 @@ import com.itfitness.app.ui.theme.TextSecondaryGrey
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
     val userProfile = viewModel.getUserProfile()
     val paymentHistory = viewModel.getPaymentHistory()
 
@@ -46,16 +49,43 @@ fun ProfileScreen(navController: NavController, viewModel: MainViewModel = viewM
         },
         containerColor = BackgroundLight
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            item {
-                BalanceSection(balance = userProfile.balance, remainingSessions = userProfile.remainingSessions)
+        if (!isLoggedIn) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(paddingValues).padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Войдите в профиль",
+                    color = TextPrimaryDark,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "Чтобы просматривать баланс и историю платежей",
+                    color = TextSecondaryGrey,
+                    fontSize = 14.sp
+                )
                 Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = { navController.navigate(com.itfitness.app.ui.navigation.Screen.Auth.route) },
+                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)
+                ) {
+                    Text("Войти", color = SurfaceWhite)
+                }
             }
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentPadding = PaddingValues(16.dp)
+            ) {
+                item {
+                    BalanceSection(balance = userProfile.balance, remainingSessions = userProfile.remainingSessions)
+                    Spacer(modifier = Modifier.height(24.dp))
+                }
 
             item {
                 AiProgramBanner()
@@ -80,6 +110,7 @@ fun ProfileScreen(navController: NavController, viewModel: MainViewModel = viewM
             items(paymentHistory) { transaction ->
                 PaymentTransactionItem(transaction = transaction)
             }
+        }
         }
     }
 }

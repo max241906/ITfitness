@@ -26,6 +26,10 @@ fun AppNavGraph(navController: NavHostController) {
         composable(Screen.Trainers.route) {
             TrainersScreen(navController = navController)
         }
+        composable("trainer_detail/{trainerId}") { backStackEntry ->
+            val trainerId = backStackEntry.arguments?.getString("trainerId") ?: return@composable
+            com.itfitness.app.ui.screens.TrainerDetailScreen(navController = navController, trainerId = trainerId)
+        }
         composable(Screen.Profile.route) {
             ProfileScreen(navController = navController)
         }

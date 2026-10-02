@@ -6,6 +6,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class MockRepository {
+    private val isLoggedInFlow = MutableStateFlow(false)
+    fun isLoggedIn(): Flow<Boolean> = isLoggedInFlow.asStateFlow()
+    fun login() { isLoggedInFlow.value = true }
+
     private val trainersFlow = MutableStateFlow(
         listOf(
             Trainer("1", "Алексей Иванов", "Кроссфит, Силовые", "Мастер спорта", 1500, 5, "https://i.pravatar.cc/300?img=11"),

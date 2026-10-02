@@ -1,11 +1,15 @@
 package com.itfitness.app.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.itfitness.app.ui.theme.BackgroundLight
 import com.itfitness.app.ui.theme.PrimaryPurple
@@ -14,11 +18,11 @@ import com.itfitness.app.ui.theme.TextPrimaryDark
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AuthScreen(navController: NavController) {
+fun AuthScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Авторизация", color = TextPrimaryDark) },
+                title = { Text("Вход", color = TextPrimaryDark) },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = SurfaceWhite)
             )
         },
@@ -32,13 +36,44 @@ fun AuthScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Экран входа / регистрации", color = TextPrimaryDark)
+            Text(
+                text = "IT FITNESS",
+                color = PrimaryPurple,
+                fontSize = 32.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                label = { Text("Email или Телефон") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            )
             Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = "",
+                onValueChange = {},
+                label = { Text("Пароль") },
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp)
+            )
+            Spacer(modifier = Modifier.height(32.dp))
+
             Button(
-                onClick = { navController.popBackStack() },
-                colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)
+                onClick = {
+                    viewModel.login()
+                    navController.popBackStack()
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(56.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("ВЕРНУТЬСЯ", color = SurfaceWhite)
+                Text("ВОЙТИ", color = SurfaceWhite, fontWeight = FontWeight.Bold, fontSize = 16.sp)
             }
         }
     }
