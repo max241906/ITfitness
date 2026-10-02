@@ -15,6 +15,7 @@ import androidx.compose.material.icons.outlined.CheckCircle
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,7 +71,40 @@ fun ScheduleScreen(navController: NavController, viewModel: MainViewModel = view
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            var selectedTabIndex by remember { mutableIntStateOf(0) }
+            val tabs = listOf("Групповые", "Индивидуальные")
+
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                containerColor = SurfaceWhite,
+                contentColor = PrimaryPurple,
+                indicator = { tabPositions ->
+                    if (selectedTabIndex < tabPositions.size) {
+                        TabRowDefaults.SecondaryIndicator(
+                            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                            color = PrimaryPurple
+                        )
+                    }
+                }
+            ) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = {
+                            Text(
+                                title,
+                                color = if (selectedTabIndex == index) PrimaryPurple else TextSecondaryGrey,
+                                fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Normal
+                            )
+                        }
+                    )
+                }
+            }
+
             DatePickerHeader()
+
+            if (selectedTabIndex == 0) {
 
             LazyColumn(
                 contentPadding = PaddingValues(16.dp),
@@ -79,6 +113,34 @@ fun ScheduleScreen(navController: NavController, viewModel: MainViewModel = view
             ) {
                 items(groupClasses) { gClass ->
                     ScheduleClassCard(gClass = gClass)
+                }
+            }
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = SurfaceWhite),
+                            shape = RoundedCornerShape(20.dp),
+                        ) {
+                            Column(modifier = Modifier.padding(20.dp)) {
+                                Text("Доступные слоты для индивидуальных занятий", fontWeight = FontWeight.Bold, color = TextPrimaryDark)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text("10:00 - Тренер: Алексей Иванов", color = TextSecondaryGrey)
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Button(
+                                    onClick = { /* book */ },
+                                    colors = ButtonDefaults.buttonColors(containerColor = PrimaryPurple)
+                                ) {
+                                    Text("Записаться (Списать 1 занятие)")
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

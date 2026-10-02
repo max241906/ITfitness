@@ -20,6 +20,9 @@ import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.QrCodeScanner
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +36,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 import com.itfitness.app.data.models.Banner
 import com.itfitness.app.data.models.GroupClass
 import com.itfitness.app.data.models.Story
@@ -51,12 +57,17 @@ import kotlinx.coroutines.delay
 fun HomeScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     val stories = viewModel.getStories()
     val banners = viewModel.getBanners()
-    val userProfile = viewModel.getUserProfile()
+    val tariffs = viewModel.getTariffs()
+    val isLoggedIn by viewModel.isLoggedIn.collectAsState()
     val nearestClass = viewModel.getGroupClasses().firstOrNull { it.isBookedByUser }
 
     Scaffold(
         topBar = {
-            HomeTopBar(userProfile, onNotificationsClick = { navController.navigate(Screen.Auth.route) })
+            HomeTopBar(onNotificationsClick = {
+                if (!isLoggedIn) {
+                    navController.navigate(Screen.Auth.route)
+                }
+            })
         },
         containerColor = SurfaceWhite
     ) { paddingValues ->
@@ -82,9 +93,24 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel = viewMode
             }
 
             item {
+                TariffsSection(tariffs = tariffs, onTariffClick = { navController.navigate(Screen.Tariff.route) })
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+
+            item {
+                CalendarSummarySection(onDayClick = { navController.navigate(Screen.Schedule.route) })
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+
+            item {
                 if (nearestClass != null) {
                     NearestScheduleSection(nearestClass, onSeeAllClick = { navController.navigate(Screen.Schedule.route) })
                 }
+                Spacer(modifier = Modifier.height(32.dp))
+            }
+
+            item {
+                MapSection()
                 Spacer(modifier = Modifier.height(32.dp))
             }
         }
@@ -92,7 +118,7 @@ fun HomeScreen(navController: NavController, viewModel: MainViewModel = viewMode
 }
 
 @Composable
-fun HomeTopBar(userProfile: UserProfile, onNotificationsClick: () -> Unit) {
+fun HomeTopBar(onNotificationsClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,47 +126,12 @@ fun HomeTopBar(userProfile: UserProfile, onNotificationsClick: () -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            AsyncImage(
-                model = userProfile.avatarUrl,
-                contentDescription = "User Avatar",
-                modifier = Modifier
-                    .size(56.dp)
-                    .clip(CircleShape)
-                    .border(1.dp, Color.LightGray, CircleShape),
-                contentScale = ContentScale.Crop
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = userProfile.name,
-                        color = TextPrimaryDark,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp
-                    )
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
-                        contentDescription = null,
-                        tint = TextPrimaryDark,
-                        modifier = Modifier.size(24.dp)
-                    )
-                }
-                Spacer(modifier = Modifier.height(4.dp))
-                Surface(
-                    color = PrimaryPurple,
-                    shape = RoundedCornerShape(12.dp)
-                ) {
-                    Text(
-                        text = userProfile.subscriptionStatus,
-                        color = SurfaceWhite,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Medium,
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
-                    )
-                }
-            }
-        }
+        Text(
+            text = "IT FITNESS",
+            color = PrimaryPurple,
+            fontSize = 24.sp,
+            fontWeight = FontWeight.ExtraBold
+        )
 
         IconButton(
             onClick = onNotificationsClick,
@@ -393,6 +384,184 @@ fun NearestScheduleSection(nearestClass: GroupClass, onSeeAllClick: () -> Unit) 
                     }
                 }
             }
+        }
+    }
+}
+
+
+@Composable
+fun TariffsSection(tariffs: List<Tariff>, onTariffClick: (Tariff) -> Unit) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Text(
+            text = "ВЫБЕРИ СВОЙ ТАРИФ",
+            color = TextPrimaryDark,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        tariffs.forEach { tariff ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .clickable { onTariffClick(tariff) },
+                colors = CardDefaults.cardColors(containerColor = PrimaryPurpleLight),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = tariff.name,
+                        color = PrimaryPurple,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = "${tariff.price} ₽ / ${tariff.period}",
+                        color = TextPrimaryDark,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+
+        // Mock remaining tariffs if not present in list
+        val extraTariffs = listOf("MEDIUM" to 2800, "ULTRA" to 3200)
+        extraTariffs.forEach { (name, price) ->
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 12.dp)
+                    .clickable { onTariffClick(Tariff("mock", name, price)) },
+                colors = CardDefaults.cardColors(containerColor = PrimaryPurpleLight),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(20.dp).fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = name,
+                        color = PrimaryPurple,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                    Text(
+                        text = "$price ₽ / месяц",
+                        color = TextPrimaryDark,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CalendarSummarySection(onDayClick: () -> Unit) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().clickable { onDayClick() },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Календарь (Ближайшие 7 дней)",
+                color = TextPrimaryDark,
+                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp
+            )
+            Icon(
+                imageVector = Icons.Default.KeyboardArrowRight,
+                contentDescription = "See all",
+                tint = TextSecondaryGrey
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val days = listOf("пн" to "1", "вт" to "2", "ср" to "3", "чт" to "4", "пт" to "5", "сб" to "6", "вс" to "7")
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            days.forEachIndexed { index, (dayName, dayNum) ->
+                val hasEvent = index == 2 || index == 5
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .size(48.dp)
+                        .background(
+                            if (hasEvent) PrimaryPurple else SurfaceWhite,
+                            CircleShape
+                        )
+                        .border(
+                            BorderStroke(1.dp, if (hasEvent) PrimaryPurple else Color(0xFFEEEEEE)),
+                            CircleShape
+                        )
+                        .clickable { onDayClick() },
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        text = dayName,
+                        color = if (hasEvent) SurfaceWhite else TextSecondaryGrey,
+                        fontSize = 10.sp
+                    )
+                    Text(
+                        text = dayNum,
+                        color = if (hasEvent) SurfaceWhite else TextPrimaryDark,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MapSection() {
+    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+        Text(
+            text = "Наши клубы",
+            color = TextPrimaryDark,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
+        )
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .border(1.dp, Color(0xFFEEEEEE), RoundedCornerShape(16.dp))
+        ) {
+            AndroidView(
+                factory = { context ->
+                    MapView(context).apply {
+                        setMultiTouchControls(true)
+                        val mapController = controller
+                        mapController.setZoom(11.0)
+                        val startPoint = GeoPoint(55.7558, 37.6173) // Moscow center
+                        mapController.setCenter(startPoint)
+
+                        // Add marker
+                        val marker = Marker(this)
+                        marker.position = startPoint
+                        marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                        marker.title = "IT FITNESS (Центральный)"
+                        overlays.add(marker)
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            )
         }
     }
 }

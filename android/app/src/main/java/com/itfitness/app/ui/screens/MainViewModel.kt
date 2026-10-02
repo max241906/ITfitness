@@ -23,5 +23,13 @@ class MainViewModel(private val repository: MockRepository = mockRepository) : V
     fun getTariffs(): List<Tariff> = repository.getTariffs()
     fun getGroupClasses(): List<GroupClass> = repository.getGroupClasses()
     fun getUserProfile(): UserProfile = repository.getUserProfile()
+
+    val isLoggedIn: StateFlow<Boolean> = repository.isLoggedIn()
+        .stateIn(viewModelScope, SharingStarted.Lazily, false)
+
+    fun login() {
+        repository.login()
+    }
+
     fun getPaymentHistory(): List<PaymentTransaction> = repository.getPaymentHistory()
 }
